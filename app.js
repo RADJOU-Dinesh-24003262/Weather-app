@@ -1,6 +1,18 @@
-async function GetCountry(){
-    //const IpURL = "https://api.ipify.org/?format=json";
-    const IpURL = "https://api.country.is/";
+/*function GetLocationManuel(){
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+
+    } else {
+        document.getElementById("error").innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+function showPosition(position) {
+    console.log(position);
+    wheather(position.coords.latitude, position.coords.longitude);
+}
+*/
+async function GetLocInfo(){
+    const IpURL = "http://www.geoplugin.net/json.gp";
     try {
         const response = await fetch(IpURL);
         if (!response.ok) {
@@ -8,14 +20,15 @@ async function GetCountry(){
         }
         const data = await response.json();
         console.log(data);
-        CountryInfo(data.country)
+        MoreCountryInfo(data.geoplugin_countryName)
+        wheather(data.geoplugin_latitude,data.geoplugin_longitude);
     } catch (error) {
         console.error('Fetch error:', error);
     }
 }
 
-async function CountryInfo(country){
-    const CountryURL = `https://restcountries.com/v3.1/alpha/${country}`;
+async function MoreCountryInfo(country){
+    const CountryURL = `https://restcountries.com/v3.1/name/${country}`;
     try {
         const response = await fetch(CountryURL);
         if (!response.ok) {
@@ -27,33 +40,6 @@ async function CountryInfo(country){
         console.error('Fetch error:', error);
     }
 }
-
-
-/*
-function Location(){
-    const LocationURL = "http://ip-api.com/json/${ip}";
-    fetch(file)
-    .then(x => x.text())
-    .then(y => myDisplay(y));
-}
-
-*/
-
-function GetLocationManuel(){
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-
-    } else {
-        document.getElementById("error").innerHTML = "Geolocation is not supported by this browser.";
-    }
-
-}
-function showPosition(position) {
-    console.log(position);
-    wheather(position.coords.latitude, position.coords.longitude);
-}
-
 
 async function wheather(latitude, longitude){
     const wheatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation_probability,precipitation&daily=temperature_2m_max,temperature_2m_min&timezone=Europe%2FBerlin&forecast_days=1`;
@@ -67,13 +53,8 @@ async function wheather(latitude, longitude){
     } catch (error) {
         console.error('Fetch error:', error);
     }
-    
-
 }
 
-
-
 window.onload = (event) => {
-    GetCountry();
-    GetLocationManuel();
+    GetLocInfo();
 };
