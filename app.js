@@ -1,3 +1,15 @@
+var country = document.getElementById("Pays");
+var countryImg = document.getElementById("PaysImg");
+var people = document.getElementById("Population");
+var city = document.getElementById("Ville");
+var region = document.getElementById("Region");
+var temperature = document.getElementById("Temperature");
+var maxTemperature = document.getElementById("MaxTemp");
+var minTemperature = document.getElementById("MinTemp");
+var probaRain = document.getElementById("Pluie");
+var rain = document.getElementById("Precipitation");
+
+
 /*function GetLocationManuel(){
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
@@ -20,6 +32,10 @@ async function GetLocInfo(){
         }
         const data = await response.json();
         console.log(data);
+
+        city.innerHTML = data.geoplugin_city;
+        region.innerHTML = data.geoplugin_region;
+
         MoreCountryInfo(data.geoplugin_countryName)
         wheather(data.geoplugin_latitude,data.geoplugin_longitude);
     } catch (error) {
@@ -27,8 +43,8 @@ async function GetLocInfo(){
     }
 }
 
-async function MoreCountryInfo(country){
-    const CountryURL = `https://restcountries.com/v3.1/name/${country}`;
+async function MoreCountryInfo(countryloc){
+    const CountryURL = `https://restcountries.com/v3.1/name/${countryloc}`;
     try {
         const response = await fetch(CountryURL);
         if (!response.ok) {
@@ -36,6 +52,13 @@ async function MoreCountryInfo(country){
         }
         const data = await response.json();
         console.log(data);
+
+        country.innerHTML = data[0].name.nativeName.fra.official;
+        countryImg.href = data[0].maps.googleMaps;
+        countryImg.src =  data[0].flags.svg;
+        countryImg.alt = data[0].flags.alt;
+        people.innerHTML = data[0].population;
+
     } catch (error) {
         console.error('Fetch error:', error);
     }
@@ -50,6 +73,22 @@ async function wheather(latitude, longitude){
         }
         const data = await response.json();
         console.log(data);
+
+
+        let timeNow = new Date(Date.now()).toISOString().slice(0,14) + "00"
+        for (const time of data.hourly.time) {
+            if(time == timeNow){
+                temperature.innerHTML = data.hourly.temperature_2m[parseInt(timeNow.slice(11,13))+1] + " " + data.hourly_units.temperature_2m;
+                probaRain.innerHTML = data.hourly.precipitation_probability[parseInt(timeNow.slice(11,13))+1] + " " + data.hourly_units.precipitation_probability;
+                rain.innerHTML = data.hourly.precipitation[parseInt(timeNow.slice(11,13))+1] + " " + data.hourly_units.precipitation;
+            }
+          }
+
+        maxTemperature.innerHTML = data.daily.temperature_2m_max + data.daily_units.temperature_2m_max;
+        minTemperature.innerHTML = data.daily.temperature_2m_min + data.daily_units.temperature_2m_min;
+
+
+
     } catch (error) {
         console.error('Fetch error:', error);
     }

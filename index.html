@@ -3,16 +3,44 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Wheather app</title>
-        <script src="app.js"></script>
     </head>
 
     <body>
-        <h1>The Wheather</h1>
-        <input type="text" placeholder="Entrez un pays/une ville"> 
-        <button type="submit">Go</button>
-        <p id="error"></p>
+        <header>
+            <h1>The Wheather</h1>
+        </header>
 
+        <section>
+            <input type="text" placeholder="Entrez un pays/une ville">
+            <button type="submit">Go</button>
+            <article>
+                <h1 id="Ville">Marseille</h1>
+                <h2 id="Region"></h2>
+                <p>Température : <b id="Temperature"></b> </p>
+                <p>Température maximale : <b id="MaxTemp"></b> </p>
+                <p>Température minimale : <b id="MinTemp"></b> </p>
+
+                <p>Probabilité de précipitations : <b id="Pluie"></b> </p>
+                <p>Précipitation : <b id="Precipitation"></b> </p>
+
+
+            </article>
+
+        </section>
+        <section>
+            <h1>À propos de la ville/pays</h1>
+            <article>
+                <h1 id="Pays">Pays</h1>
+                <img id="PaysImg" src="" width="450" height="300">
+                <p> 
+                    <b id="Population"> </b> habitants 
+                </p>
+            </article>
         
+        </section>
+
 
     </body>
+    <script src="app.js"></script>
+
 </html>
