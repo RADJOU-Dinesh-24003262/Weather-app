@@ -94,7 +94,7 @@ async function SearchCity(){
     let text = document.getElementById("Search").value;
     const IpURL = `https://geocoding-api.open-meteo.com/v1/search?name=${text}&count=10&format=json&language=fr`;
     let Option = document.getElementById("search-options");
-    if(text.length > 3){ 
+    if(text.length > 1){ 
         try {
             const response = await fetch(IpURL);
             if (!response.ok) {
@@ -105,16 +105,18 @@ async function SearchCity(){
             
             if(data.results != undefined){
                 var textOption = "";
-                for (let i in data.results) {
-                    if(data.results[i].admin1 != undefined && data.results[i].admin2 != undefined){
-                        var region = data.results[i].admin1 + ", " + data.results[i].admin2 + ", " + data.results[i].country;
-                    }else if(data.results[i].admin1){
-                        var region = data.results[i].admin1 + ", " + data.results[i].country;
+                data.results.forEach((item) => {
+                    
+                    if(item.admin1 != undefined && item.admin2 != undefined){
+                        var region = item.admin1 + ", " + item.admin2 + ", " + item.country;
+                    }else if(item.admin1){
+                        var region = item.admin1 + ", " + item.country;
                     }else{
-                        var region = data.results[i].country;
+                        var region = item.country;
                     }
-                    textOption += `<option value="${data.results[i].name}">${region}</option> `;
-                 }
+                    textOption += `<option value="${item.name}">${region}</option> `;
+                  })
+
             }
             
             Option.innerHTML = textOption;
