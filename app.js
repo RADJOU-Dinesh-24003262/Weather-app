@@ -32,15 +32,12 @@ async function GetLocInfo(){
         }
         const data = await response.json();
         console.log(data);
+        return data;
 
-        city.innerHTML = data.geoplugin_city;
-        region.innerHTML = data.geoplugin_region;
-
-        MoreCountryInfo(data.geoplugin_countryName)
-        wheather(data.geoplugin_latitude,data.geoplugin_longitude);
     } catch (error) {
         console.error('Fetch error:', error);
     }
+    
 }
 
 async function MoreCountryInfo(countryloc){
@@ -58,7 +55,6 @@ async function MoreCountryInfo(countryloc){
         countryImg.src =  data[0].flags.svg;
         countryImg.alt = data[0].flags.alt;
         people.innerHTML = data[0].population;
-
     } catch (error) {
         console.error('Fetch error:', error);
     }
@@ -94,6 +90,52 @@ async function wheather(latitude, longitude){
     }
 }
 
-window.onload = (event) => {
-    GetLocInfo();
+async function SearchCity(){
+    let text = document.getElementById("Search").value;
+    const IpURL = `https://geocoding-api.open-meteo.com/v1/search?name=${text}&count=10&format=json&language=fr`;
+    let Option = document.getElementById("search-options");
+    if(text.length > 3){ 
+        try {
+            const response = await fetch(IpURL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch IP: ${response.statusText}`);
+            }
+            const data = await response.json();
+            console.log(data.results);
+            
+            if(data.results != undefined){
+                var textOption = "";
+                for (let i in data.results) {
+                    if(data.results[i].admin1 != undefined && data.results[i].admin2 != undefined){
+                        var region = data.results[i].admin1 + ", " + data.results[i].admin2 + ", " + data.results[i].country;
+                    }else if(data.results[i].admin1){
+                        var region = data.results[i].admin1 + ", " + data.results[i].country;
+                    }else{
+                        var region = data.results[i].country;
+                    }
+                    textOption += `<option value="${data.results[i].name}">${region}</option> `;
+                 }
+            }
+            
+            Option.innerHTML = textOption;
+
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }else{
+        Option.innerHTML = "";
+        text.autocomplete = "off";
+    }    
+}
+
+
+window.onload = async (event) => {
+    data = await GetLocInfo();
+    console.log(data);
+    city.innerHTML = data.geoplugin_city;
+    region.innerHTML = data.geoplugin_region;
+    
+
+    MoreCountryInfo(data.geoplugin_countryName);
+    wheather(data.geoplugin_latitude,data.geoplugin_longitude);
 };
