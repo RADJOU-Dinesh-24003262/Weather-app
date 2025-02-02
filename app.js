@@ -134,19 +134,21 @@ async function SearchCity(){
     }    
 }
 
-faire en fonction du gmt, a faire 
+//faire en fonction du gmt, a faire 
 
 async function CityInfo(form){
    
     var SearchValue = await form.Search.value;
+    i = parseInt(SearchValue[0])-1;
+    form.Search.value = SearchValue.slice(3,SearchValue.length) + ", " + dataCity[i].country ;
 
-    console.log(dataCity)
-    longitude = dataCity[parseInt(SearchValue[0])-1].longitude ;
-    latitude = dataCity[parseInt(SearchValue[0])-1].latitude;
+    console.log(dataCity);
+    longitude = dataCity[i].longitude ;
+    latitude = dataCity[i].latitude;
 
-    city.innerHTML = dataCity[parseInt(SearchValue[0])-1].name;
-    region.innerHTML = dataCity[parseInt(SearchValue[0])-1].admin1;
-    MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=${dataCity[parseInt(SearchValue[0])-1].country_code}`);
+    city.innerHTML = dataCity[i].name;
+    region.innerHTML = dataCity[i].admin1;
+    MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=${dataCity[i].country_code}`);
     wheather();
 
 }
