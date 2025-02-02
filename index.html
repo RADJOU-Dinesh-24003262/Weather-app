@@ -15,10 +15,10 @@
 
         <section>
             <article id="SearchBar">
-                <form onsubmit="event.preventDefault();" role="search">
-                    <label for="Search">Search for stuff</label>
+                <form name="form" onsubmit="event.preventDefault();" action="" method="GET" role="search">
+                    <label for="Search">Cherchez un endroit</label>
                     <input list="search-options" oninput="SearchCity()" id="Search" name="Search" type="search" placeholder="Search..." autofocus required />
-                    <button type="submit">Go</button>  
+                    <button type="submit" onClick="CityInfo(this.form)">Go</button>  
                     <datalist id="search-options">
                     </datalist>
                     
@@ -42,7 +42,9 @@
             <h1>À propos de la ville/pays</h1>
             <article>
                 <h1 id="Pays">Pays</h1>
-                <img id="PaysImg" src="" width="450" height="300">
+                <a href="" id="PaysImgLink" target="blank">
+                    <img id="PaysImg" src="" width="450" height="300">
+                </a>
                 <p> 
                     <b id="Population"> </b> habitants 
                 </p>

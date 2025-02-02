@@ -1,5 +1,6 @@
 var country = document.getElementById("Pays");
 var countryImg = document.getElementById("PaysImg");
+var countryImgLink = document.getElementById("PaysImgLink");
 var people = document.getElementById("Population");
 var city = document.getElementById("Ville");
 var region = document.getElementById("Region");
@@ -8,6 +9,9 @@ var maxTemperature = document.getElementById("MaxTemp");
 var minTemperature = document.getElementById("MinTemp");
 var probaRain = document.getElementById("Pluie");
 var rain = document.getElementById("Precipitation");
+var latitude;
+var longitude;
+var dataCity;
 
 
 /*function GetLocationManuel(){
@@ -32,6 +36,8 @@ async function GetLocInfo(){
         }
         const data = await response.json();
         console.log(data);
+        latitude = data.geoplugin_latitude; 
+        longitude = data.geoplugin_longitude;
         return data;
 
     } catch (error) {
@@ -40,8 +46,7 @@ async function GetLocInfo(){
     
 }
 
-async function MoreCountryInfo(countryloc){
-    const CountryURL = `https://restcountries.com/v3.1/name/${countryloc}`;
+async function MoreCountryInfo(CountryURL){
     try {
         const response = await fetch(CountryURL);
         if (!response.ok) {
@@ -50,8 +55,8 @@ async function MoreCountryInfo(countryloc){
         const data = await response.json();
         console.log(data);
 
-        country.innerHTML = data[0].name.nativeName.fra.official;
-        countryImg.href = data[0].maps.googleMaps;
+        country.innerHTML = data[0].translations.fra.official;
+        countryImgLink.href = data[0].maps.googleMaps;
         countryImg.src =  data[0].flags.svg;
         countryImg.alt = data[0].flags.alt;
         people.innerHTML = data[0].population;
@@ -60,8 +65,8 @@ async function MoreCountryInfo(countryloc){
     }
 }
 
-async function wheather(latitude, longitude){
-    const wheatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation_probability,precipitation&daily=temperature_2m_max,temperature_2m_min&timezone=Europe%2FBerlin&forecast_days=1`;
+async function wheather(){
+    const wheatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation_probability,precipitation&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1`;
     try {
         const response = await fetch(wheatherURL);
         if (!response.ok) {
@@ -71,14 +76,12 @@ async function wheather(latitude, longitude){
         console.log(data);
 
 
-        let timeNow = new Date(Date.now()).toISOString().slice(0,14) + "00"
-        for (const time of data.hourly.time) {
-            if(time == timeNow){
-                temperature.innerHTML = data.hourly.temperature_2m[parseInt(timeNow.slice(11,13))+1] + " " + data.hourly_units.temperature_2m;
-                probaRain.innerHTML = data.hourly.precipitation_probability[parseInt(timeNow.slice(11,13))+1] + " " + data.hourly_units.precipitation_probability;
-                rain.innerHTML = data.hourly.precipitation[parseInt(timeNow.slice(11,13))+1] + " " + data.hourly_units.precipitation;
-            }
-          }
+        let timeNow = new Date(Date.now());
+
+        temperature.innerHTML = data.hourly.temperature_2m[timeNow.getHours()] + " " + data.hourly_units.temperature_2m;
+        probaRain.innerHTML = data.hourly.precipitation_probability[timeNow.getHours()] + " " + data.hourly_units.precipitation_probability;
+        rain.innerHTML = data.hourly.precipitation[timeNow.getHours()] + " " + data.hourly_units.precipitation;
+
 
         maxTemperature.innerHTML = data.daily.temperature_2m_max + data.daily_units.temperature_2m_max;
         minTemperature.innerHTML = data.daily.temperature_2m_min + data.daily_units.temperature_2m_min;
@@ -101,11 +104,10 @@ async function SearchCity(){
                 throw new Error(`Failed to fetch IP: ${response.statusText}`);
             }
             const data = await response.json();
-            console.log(data.results);
             
+            var textOption = "";
             if(data.results != undefined){
-                var textOption = "";
-                data.results.forEach((item) => {
+                data.results.forEach((item, index) => {
                     
                     if(item.admin1 != undefined && item.admin2 != undefined){
                         var region = item.admin1 + ", " + item.admin2 + ", " + item.country;
@@ -114,11 +116,13 @@ async function SearchCity(){
                     }else{
                         var region = item.country;
                     }
-                    textOption += `<option value="${item.name}">${region}</option> `;
+                    textOption += `<option value="${index+1}. ${item.name}">${region}</option> `;
                   })
+                dataCity = data.results;
+                console.log(dataCity);
 
             }
-            
+
             Option.innerHTML = textOption;
 
         } catch (error) {
@@ -130,14 +134,29 @@ async function SearchCity(){
     }    
 }
 
+faire en fonction du gmt, a faire 
+
+async function CityInfo(form){
+   
+    var SearchValue = await form.Search.value;
+
+    console.log(dataCity)
+    longitude = dataCity[parseInt(SearchValue[0])-1].longitude ;
+    latitude = dataCity[parseInt(SearchValue[0])-1].latitude;
+
+    city.innerHTML = dataCity[parseInt(SearchValue[0])-1].name;
+    region.innerHTML = dataCity[parseInt(SearchValue[0])-1].admin1;
+    MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=${dataCity[parseInt(SearchValue[0])-1].country_code}`);
+    wheather();
+
+}
 
 window.onload = async (event) => {
     data = await GetLocInfo();
-    console.log(data);
     city.innerHTML = data.geoplugin_city;
     region.innerHTML = data.geoplugin_region;
     
 
-    MoreCountryInfo(data.geoplugin_countryName);
-    wheather(data.geoplugin_latitude,data.geoplugin_longitude);
+    MoreCountryInfo(`https://restcountries.com/v3.1/name/${data.geoplugin_countryName}`);
+    wheather();
 };
