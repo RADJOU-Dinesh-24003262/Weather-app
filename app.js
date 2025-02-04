@@ -28,7 +28,7 @@ function showPosition(position) {
 }
 */
 async function GetLocInfo(){
-    const IpURL = "http://www.geoplugin.net/json.gp";
+    const IpURL = "https://www.geoplugin.net/json.gp";
     try {
         const response = await fetch(IpURL);
         if (!response.ok) {
