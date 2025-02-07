@@ -28,7 +28,7 @@ function showPosition(position) {
 }
 */
 async function GetLocInfo(){
-    const IpURL = "https://www.geoplugin.net/json.gp";
+    const IpURL = "https://ipinfo.io/json";
     try {
         const response = await fetch(IpURL);
         if (!response.ok) {
@@ -36,8 +36,8 @@ async function GetLocInfo(){
         }
         const data = await response.json();
         console.log(data);
-        latitude = data.geoplugin_latitude; 
-        longitude = data.geoplugin_longitude;
+        latitude = data.loc[0]; 
+        longitude = data.loc[1];
         return data;
 
     } catch (error) {
@@ -155,10 +155,10 @@ async function CityInfo(form){
 
 window.onload = async (event) => {
     data = await GetLocInfo();
-    city.innerHTML = data.geoplugin_city;
-    region.innerHTML = data.geoplugin_region;
+    city.innerHTML = data.city;
+    region.innerHTML = data.region;
     
 
-    MoreCountryInfo(`https://restcountries.com/v3.1/name/${data.geoplugin_countryName}`);
+    MoreCountryInfo(`https://restcountries.com/v3.1/alpha/${data.country}`);
     wheather();
 };
