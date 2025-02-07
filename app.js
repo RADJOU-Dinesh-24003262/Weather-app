@@ -9,26 +9,32 @@ var maxTemperature = document.getElementById("MaxTemp");
 var minTemperature = document.getElementById("MinTemp");
 var probaRain = document.getElementById("Pluie");
 var rain = document.getElementById("Precipitation");
+var userdata;
 var latitude;
 var longitude;
 var dataCity;
 
 
-/*function GetLocationManuel(){
+function GetLocationManuel(){
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
     } else {
-        document.getElementById("error").innerHTML = "Geolocation is not supported by this browser.";
+        document.getElementById("Ville").innerHTML = "Geolocation is not supported by this browser.";
     }
 }
+
 function showPosition(position) {
-    console.log(position);
+    console.log(position + "547564");
+    userdata = position;
     wheather(position.coords.latitude, position.coords.longitude);
 }
-*/
-async function GetLocInfo(){
-    const IpURL = "https://ipinfo.io/json";
+
+function showError(error) {
+    console.log("Error occurred: " + error.message);
+    document.getElementById("Ville").innerHTML = "Error: " + error.message;
+}
+
+async function GetLocInfo(IpURL){
     try {
         const response = await fetch(IpURL);
         if (!response.ok) {
@@ -36,8 +42,6 @@ async function GetLocInfo(){
         }
         const data = await response.json();
         console.log(data);
-        latitude = data.loc[0]; 
-        longitude = data.loc[1];
         return data;
 
     } catch (error) {
@@ -154,11 +158,43 @@ async function CityInfo(form){
 }
 
 window.onload = async (event) => {
-    data = await GetLocInfo();
-    city.innerHTML = data.city;
-    region.innerHTML = data.region;
-    
+    data = await GetLocInfo("https://ipinfo.io/json");
+    let Country1
+    if (data != undefined){
+        let VirgI = data.loc.indexOf(',');
+        console.log(VirgI);
+        if (VirgI !== -1) {
+            latitude = data.loc.substring(0, VirgI); 
+            longitude = data.loc.substring(VirgI + 1);
+        }
+        console.log(latitude,longitude);
+        city.innerHTML = data.city;
+        region.innerHTML = data.region;
+        Country1 = "alpha/" + data.country;
+        userdata = data;
+    }
 
-    MoreCountryInfo(`https://restcountries.com/v3.1/alpha/${data.country}`);
+    if(data == undefined){
+        data = await GetLocInfo("http://www.geoplugin.net/json.gp");
+        if (data != undefined){
+            latitude = data.geoplugin_latitude; 
+            longitude = data.geoplugin_longitude;
+            city.innerHTML = data.geoplugin_city;
+            region.innerHTML = data.geoplugin_region;
+            Country1 = "name/" + data.geoplugin_countryName;
+            userdata = data;
+        }
+    }
+    
+    if (data == undefined){
+        GetLocationManuel();
+        console.log(userdata + "211223");
+        latitude = userdata.coords.latitude
+        longitude =  userdata.coords.longitude;
+        
+    }
+    
+    console.log(latitude,longitude);
+    MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
     wheather();
 };
