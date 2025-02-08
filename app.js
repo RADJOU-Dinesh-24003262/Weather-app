@@ -172,9 +172,7 @@ window.onload = async (event) => {
         region.innerHTML = data.region;
         Country1 = "alpha/" + data.country;
         userdata = data;
-    }
-
-    if(data == undefined){
+    }else {
         data = await GetLocInfo("http://www.geoplugin.net/json.gp");
         if (data != undefined){
             latitude = data.geoplugin_latitude; 
