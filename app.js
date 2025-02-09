@@ -15,25 +15,32 @@ var longitude;
 var dataCity;
 
 
-function GetLocationManuel(){
+async function GetLocationManuel(){
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, showError);
     } else {
-        document.getElementById("Ville").innerHTML = "Geolocation is not supported by this browser.";
+        console.log("Geolocation is not supported by this browser.");
     }
 }
 
-function showPosition(position) {
-    console.log(position + "547564");
+async function showPosition(position) {
     userdata = position;
     latitude = position.coords.latitude
     longitude =  position.coords.longitude;
+    userdata = [position,await GetLocInfo(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)];
+    console.log(userdata);
+    let Country1 = "name/" + userdata[1].address.country; 
+    MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
+
+    let cityInfo = userdata[1].address;
+    //marche aps toue le temps
+    city.innerHTML = cityInfo.city;
+    region.innerHTML = cityInfo.country;
     wheather();
 }
 
 function showError(error) {
     console.log("Error occurred: " + error.message);
-    document.getElementById("Ville").innerHTML = "Error: " + error.message;
 }
 
 async function GetLocInfo(IpURL){
@@ -160,7 +167,7 @@ async function CityInfo(form){
 }
 
 window.onload = async (event) => {
-    data = await GetLocInfo("https://ipinfo.io/json0");
+    data = await GetLocInfo("https://ipinfo.io/json");
     let Country1
     if (data != undefined){
         let VirgI = data.loc.indexOf(',');
@@ -175,7 +182,7 @@ window.onload = async (event) => {
         Country1 = "alpha/" + data.country;
         userdata = data;
     }else {
-        data = await GetLocInfo("http://www.geoplugin.net/json.gp0");
+        data = await GetLocInfo("http://www.geoplugin.net/json.gp");
         if (data != undefined){
             latitude = data.geoplugin_latitude; 
             longitude = data.geoplugin_longitude;
@@ -186,13 +193,9 @@ window.onload = async (event) => {
         }
     }
     
-    if (data == undefined){
-        GetLocationManuel();
-        console.log(userdata + "211223");
-        
-    }
-    
     console.log(latitude,longitude);
     MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
     wheather();
+
+    await GetLocationManuel();   
 };
