@@ -36,7 +36,7 @@ async function showPosition(position) {
     //marche aps toue le temps
     city.innerHTML = cityInfo.city;
     region.innerHTML = cityInfo.country;
-    wheather();
+    weather();
 }
 
 function showError(error) {
@@ -78,12 +78,12 @@ async function MoreCountryInfo(CountryURL){
     }
 }
 
-async function wheather(){
-    const wheatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation_probability,precipitation&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1`;
+async function weather(){
+    const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation_probability,precipitation&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1`;
     try {
-        const response = await fetch(wheatherURL);
+        const response = await fetch(weatherURL);
         if (!response.ok) {
-            throw new Error(`Failed to fetch the Wheather: ${response.statusText}`);
+            throw new Error(`Failed to fetch the Weather: ${response.statusText}`);
         }
         const data = await response.json();
         console.log(data);
@@ -162,7 +162,7 @@ async function CityInfo(form){
     city.innerHTML = dataCity[i].name;
     region.innerHTML = dataCity[i].admin1;
     MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=${dataCity[i].country_code}`);
-    wheather();
+    weather();
 
 }
 
@@ -195,7 +195,7 @@ window.onload = async (event) => {
     
     console.log(latitude,longitude);
     MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
-    wheather();
+    weather();
 
     await GetLocationManuel();   
 };
