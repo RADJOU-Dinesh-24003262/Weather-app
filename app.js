@@ -33,8 +33,12 @@ async function showPosition(position) {
     MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
 
     let cityInfo = userdata[1].address;
-    //marche aps toue le temps
-    city.innerHTML = cityInfo.city;
+    if (cityInfo.city != undefined){
+        city.innerHTML = cityInfo.city;
+    }else if (cityInfo.town != undefined){
+        city.innerHTML = cityInfo.town;
+    }
+    
     region.innerHTML = cityInfo.country;
     weather();
 }
