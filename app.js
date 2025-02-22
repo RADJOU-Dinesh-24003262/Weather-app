@@ -92,8 +92,8 @@ async function weather(){
         let timeNow = new Date(Date.now());
 
         temperature.innerHTML = data.hourly.temperature_2m[timeNow.getHours()] + " " + data.hourly_units.temperature_2m;
-        probaRain.innerHTML = data.hourly.precipitation_probability[timeNow.getHours()] + " " + data.hourly_units.precipitation_probability;
-        rain.innerHTML = data.hourly.precipitation[timeNow.getHours()] + " " + data.hourly_units.precipitation;
+        probaRain.innerHTML = Math.max(...data.hourly.precipitation_probability.slice(timeNow.getHours(), timeNow.getHours()+2)) + " " + data.hourly_units.precipitation_probability;
+        rain.innerHTML = Math.max(...data.hourly.precipitation.slice(timeNow.getHours(), timeNow.getHours()+2)) + " " + data.hourly_units.precipitation;
 
 
         maxTemperature.innerHTML = data.daily.temperature_2m_max + data.daily_units.temperature_2m_max;
@@ -153,7 +153,7 @@ async function CityInfo(form){
    
     var SearchValue = await form.Search.value;
     i = parseInt(SearchValue[0])-1;
-    form.Search.value = SearchValue.slice(3,SearchValue.length) + ", " + dataCity[i].country ;
+    form.Search.value = SearchValue.slice(3,SearchValue.length) ;
 
     console.log(dataCity);
     longitude = dataCity[i].longitude ;
