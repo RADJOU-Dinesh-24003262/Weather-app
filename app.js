@@ -192,10 +192,10 @@ window.onload = async (event) => {
             userdata = data;
         }
     }
-    
-    console.log(latitude,longitude);
-    MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
-    weather();
-
+    if (data != undefined){
+        console.log(latitude,longitude);
+        MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
+        weather();
+    }
     await GetLocationManuel();   
 };
