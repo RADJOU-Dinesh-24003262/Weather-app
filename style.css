@@ -18,7 +18,7 @@ body{
     align-items: center;
     justify-content: center;
     background-color: light-dark(antiquewhite, #1D1616);
-    color: light-dark(#EEEEEE);
+    color: light-dark(#2f2f2f, #EEEEEE);
 }
 
 
