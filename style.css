@@ -118,7 +118,7 @@ button {
 input:not(:placeholder-shown) {
   border-radius: var(--rad) 0 0 var(--rad);
   width: calc(100% - var(--btn-width));
-  button {
+  + button {
     display: block;
   }
 }
