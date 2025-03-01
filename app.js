@@ -49,6 +49,15 @@ async function showPosition(position) {
 }
 
 function showError(error) {
+    MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=FR`)
+    document.getElementsByTagName("section")[0].lastElementChild.style.display = "none";
+    msg = document.createElement("h1");
+    msg.textContent = "Veuillez nous autorisez à acceder à la localisation !!!";
+    msg.style.color = "red";
+    msg.style.margin = "40% 10%";
+
+    document.getElementsByTagName("section")[0].insertBefore(msg, document.getElementsByTagName("article")[1]);
+
     console.log("Error occurred: " + error.message);
 }
 
@@ -171,6 +180,7 @@ async function CityInfo(form){
         region.innerHTML = dataCity[i].admin1;
         MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=${dataCity[i].country_code}`);
         weather();
+        document.getElementsByTagName("section")[0].lastElementChild.style.display = "block";
     }else{
         while ( !isNaN(Number(SearchValue[0])) || SearchValue[0] === '.' || SearchValue[0] === ' ' ){
             SearchValue = SearchValue.slice(1 , SearchValue.length);
