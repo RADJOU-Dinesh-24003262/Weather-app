@@ -15,11 +15,16 @@ var longitude;
 var dataCity;
 
 
-async function GetLocationManuel(){
+async function GetLocationManuel(userdata,Country1){
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, showError);
     } else {
         console.log("Geolocation is not supported by this browser.");
+        if (userdata && Country1){
+            console.log(latitude,longitude);
+            MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
+            weather();
+        }
     }
 }
 
@@ -69,7 +74,7 @@ async function MoreCountryInfo(CountryURL){
         if (!response.ok) {
             throw new Error(`Failed to fetch IP: ${response.statusText}`);
         }
-        const data = await response.json();
+        data = await response.json();
         console.log(data);
 
         country.innerHTML = data[0].translations.fra.official;
@@ -99,11 +104,8 @@ async function weather(){
         probaRain.innerHTML = Math.max(...data.hourly.precipitation_probability.slice(timeNow.getHours(), timeNow.getHours()+2)) + " " + data.hourly_units.precipitation_probability;
         rain.innerHTML = Math.max(...data.hourly.precipitation.slice(timeNow.getHours(), timeNow.getHours()+2)) + " " + data.hourly_units.precipitation;
 
-
         maxTemperature.innerHTML = data.daily.temperature_2m_max + data.daily_units.temperature_2m_max;
         minTemperature.innerHTML = data.daily.temperature_2m_min + data.daily_units.temperature_2m_min;
-
-
 
     } catch (error) {
         console.error('Fetch error:', error);
@@ -126,10 +128,10 @@ async function SearchCity(){
             if(data.results != undefined){
                 data.results.forEach((item, index) => {
                     
-                    if(item.admin1 != undefined && item.admin2 != undefined){
-                        var region = item.admin1 + ", " + item.admin2 + ", " + item.country;
+                    if (item.admin1 && item.admin2){
+                        var region = `${item.admin1}, ${item.admin2}, ${item.country}`;
                     }else if(item.admin1){
-                        var region = item.admin1 + ", " + item.country;
+                        var region = `${item.admin1}, ${item.country}`;
                     }else{
                         var region = item.country;
                     }
@@ -171,35 +173,36 @@ async function CityInfo(form){
 }
 
 window.onload = async (event) => {
-    data = await GetLocInfo("https://ipinfo.io/json");
-    let Country1
-    if (data != undefined){
-        let VirgI = data.loc.indexOf(',');
-        console.log(VirgI);
-        if (VirgI !== -1) {
-            latitude = data.loc.substring(0, VirgI); 
-            longitude = data.loc.substring(VirgI + 1);
-        }
-        console.log(latitude,longitude);
-        city.innerHTML = data.city;
-        region.innerHTML = data.region;
-        Country1 = "alpha/" + data.country;
-        userdata = data;
-    }else {
-        data = await GetLocInfo("http://www.geoplugin.net/json.gp");
+    let Country1;
+    try{
+        data = await GetLocInfo("https://ipinfo.io/json");
         if (data != undefined){
-            latitude = data.geoplugin_latitude; 
-            longitude = data.geoplugin_longitude;
-            city.innerHTML = data.geoplugin_city;
-            region.innerHTML = data.geoplugin_region;
-            Country1 = "name/" + data.geoplugin_countryName;
+            console.log(data.loc);
+            let VirgI = data.loc.indexOf(',');
+            console.log(typeof data.loc);
+            console.log(VirgI);
+            if (VirgI !== -1) {
+                latitude = data.loc.substring(0, VirgI); 
+                longitude = data.loc.substring(VirgI + 1);
+            }
+            console.log(latitude,longitude);
+            city.innerHTML = data.city;
+            region.innerHTML = data.region;
+            Country1 = "alpha/" + data.country;
             userdata = data;
+        }else {
+            data = await GetLocInfo("http://www.geoplugin.net/json.gp");
+            if (data != undefined){
+                latitude = data.geoplugin_latitude; 
+                longitude = data.geoplugin_longitude;
+                city.innerHTML = data.geoplugin_city;
+                region.innerHTML = data.geoplugin_region;
+                Country1 = "name/" + data.geoplugin_countryName;
+                userdata = data;
+            }
         }
+    } catch (error) {
+        console.error('Fetch error:', error);
     }
-    if (data != undefined){
-        console.log(latitude,longitude);
-        MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
-        weather();
-    }
-    await GetLocationManuel();   
+    await GetLocationManuel(userdata, Country1);
 };
