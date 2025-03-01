@@ -157,18 +157,29 @@ async function SearchCity(){
 
 async function CityInfo(form){
    
-    var SearchValue = await form.Search.value;
-    i = parseInt(SearchValue[0])-1;
-    form.Search.value = SearchValue.slice(3,SearchValue.length) ;
-
     console.log(dataCity);
-    longitude = dataCity[i].longitude ;
-    latitude = dataCity[i].latitude;
+    var SearchValue = await form.Search.value;
+    if(dataCity  && !isNaN(Number(SearchValue[0]))){
+        i = parseInt(SearchValue[0])-1;
+        form.Search.value = SearchValue.slice(3,SearchValue.length) ;
 
-    city.innerHTML = dataCity[i].name;
-    region.innerHTML = dataCity[i].admin1;
-    MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=${dataCity[i].country_code}`);
-    weather();
+        
+        longitude = dataCity[i].longitude ;
+        latitude = dataCity[i].latitude;
+
+        city.innerHTML = dataCity[i].name;
+        region.innerHTML = dataCity[i].admin1;
+        MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=${dataCity[i].country_code}`);
+        weather();
+    }else{
+        while ( !isNaN(Number(SearchValue[0])) || SearchValue[0] === '.' || SearchValue[0] === ' ' ){
+            SearchValue = SearchValue.slice(1 , SearchValue.length);
+            form.Search.value = SearchValue;
+            console.log(SearchValue);
+        }
+        
+        SearchCity();
+    }
 
 }
 
