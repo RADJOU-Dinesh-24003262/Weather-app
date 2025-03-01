@@ -1,9 +1,24 @@
+/*Vars*/
+:root {
+  color-scheme: light dark;
+  --rad: .7rem;
+  --dur: .3s;
+  --color-dark: #2f2f2f;
+  --color-light: #fff;
+  --color-brand: #57bd84;
+  --font-fam: 'Lato', sans-serif;
+  --btn-width: 20%;
+  --bez: cubic-bezier(0, 0, 0.43, 1.49);
+}
+
+
 body{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color:antiquewhite
+    background-color: light-dark(antiquewhite, #1D1616);
+    color: light-dark(#EEEEEE);
 }
 
 
@@ -60,18 +75,6 @@ article h1{
 }
 
 
-
-/*Vars*/
-:root {
-  --rad: .7rem;
-  --dur: .3s;
-  --color-dark: #2f2f2f;
-  --color-light: #fff;
-  --color-brand: #57bd84;
-  --font-fam: 'Lato', sans-serif;
-  --btn-width: 20%;
-  --bez: cubic-bezier(0, 0, 0.43, 1.49);
-}
 
 
 /* Main styles*/
