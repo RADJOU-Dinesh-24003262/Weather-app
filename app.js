@@ -22,8 +22,9 @@ async function GetLocationManuel(userdata,Country1){
         console.log("Geolocation is not supported by this browser.");
         if (userdata && Country1){
             console.log(latitude,longitude);
-            MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
             weather();
+            MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
+            
         }
     }
 }
@@ -32,6 +33,7 @@ async function showPosition(position) {
     userdata = position;
     latitude = position.coords.latitude
     longitude =  position.coords.longitude;
+    weather();
     userdata = [position,await GetLocInfo(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)];
     console.log(userdata);
     let Country1 = "name/" + userdata[1].address.country; 
@@ -45,7 +47,7 @@ async function showPosition(position) {
     }
     
     region.innerHTML = cityInfo.country;
-    weather();
+    
 }
 
 function showError(error) {
@@ -175,11 +177,12 @@ async function CityInfo(form){
         
         longitude = dataCity[i].longitude ;
         latitude = dataCity[i].latitude;
+        weather();
 
         city.innerHTML = dataCity[i].name;
         region.innerHTML = dataCity[i].admin1;
         MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=${dataCity[i].country_code}`);
-        weather();
+        
         document.getElementsByTagName("section")[0].lastElementChild.style.display = "block";
     }else{
         while ( !isNaN(Number(SearchValue[0])) || SearchValue[0] === '.' || SearchValue[0] === ' ' ){
