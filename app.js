@@ -9,7 +9,6 @@ var maxTemperature = document.getElementById("MaxTemp");
 var minTemperature = document.getElementById("MinTemp");
 var probaRain = document.getElementById("Pluie");
 var rain = document.getElementById("Precipitation");
-var userdata;
 var latitude;
 var longitude;
 var dataCity;
@@ -17,19 +16,15 @@ var dataCity;
 
 async function GetLocationManuel(userdata,Country1){
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
+        navigator.geolocation.getCurrentPosition(            
+            (position) => showPosition(position, userdata), 
+            (error) => showError(error, userdata, Country1));
     } else {
         console.log("Geolocation is not supported by this browser.");
-        if (userdata && Country1){
-            console.log(latitude,longitude);
-            weather();
-            MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
-            
-        }
     }
 }
 
-async function showPosition(position) {
+async function showPosition(position, userdata) {
     userdata = position;
     latitude = position.coords.latitude
     longitude =  position.coords.longitude;
@@ -50,9 +45,16 @@ async function showPosition(position) {
     
 }
 
-function showError(error) {
-    MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=FR`)
-    document.getElementsByTagName("section")[0].lastElementChild.style.display = "none";
+function showError(error, userdata, Country1) {
+    MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=FR`);
+    if (userdata && Country1){
+        console.log(latitude,longitude);
+        weather();
+        MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
+        
+    }else{
+        document.getElementsByTagName("section")[0].lastElementChild.style.display = "none";
+    }
     msg = document.createElement("h1");
     msg.textContent = "Veuillez nous autorisez à acceder à la localisation !!!";
     msg.style.color = "red";
@@ -198,6 +200,7 @@ async function CityInfo(form){
 
 window.onload = async (event) => {
     let Country1;
+    let userdata;
     try{
         data = await GetLocInfo("https://ipinfo.io/json");
         if (data != undefined){
