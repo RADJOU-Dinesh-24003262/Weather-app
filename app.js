@@ -14,18 +14,16 @@ var longitude;
 var dataCity;
 
 
-async function GetLocationManuel(userdata,Country1){
+async function GetLocationManuel(){
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(            
-            (position) => showPosition(position, userdata), 
-            (error) => showError(error, userdata, Country1));
+        navigator.geolocation.getCurrentPosition(showPosition,showError);
     } else {
         console.log("Geolocation is not supported by this browser.");
     }
 }
 
-async function showPosition(position, userdata) {
-    userdata = position;
+async function showPosition(position) {
+    let userdata = position;
     latitude = position.coords.latitude
     longitude =  position.coords.longitude;
     weather();
@@ -42,27 +40,54 @@ async function showPosition(position, userdata) {
     }
     
     region.innerHTML = cityInfo.country;
-    
 }
 
-function showError(error, userdata, Country1) {
-    MoreCountryInfo(`https://restcountries.com/v3.1/alpha?codes=FR`);
-    if (userdata && Country1){
+async function showError(error) {
+    console.log("Error occurred: " + error.message);
+    msg = document.createElement("h1");
+    if (error.message == "User denied Geolocation"){
+        msg.textContent = "Veuillez nous autorisez à accéder à la localisation !!!";
+    }else{
+        msg.textContent = "Il ya eu un problème, nous ne pouvons pas accéder a votre position";
+    }
+    msg.style.color = "red";
+    msg.style.margin = "30% 10%";
+    document.getElementsByTagName("section")[0].insertBefore(msg, document.getElementsByTagName("article")[1]);
+
+    let Country1;
+    try{
+        data = await GetLocInfo("https://ipinfo.io/json");
+        if (data != undefined){
+            console.log(data.loc);
+            let VirgI = data.loc.indexOf(',');
+            if (VirgI !== -1) {
+                latitude = data.loc.substring(0, VirgI); 
+                longitude = data.loc.substring(VirgI + 1);
+            }
+            console.log(latitude,longitude);
+            city.innerHTML = data.city;
+            region.innerHTML = data.region;
+            Country1 = "alpha/" + data.country;
+        }else {
+            data = await GetLocInfo("http://www.geoplugin.net/json.gp");
+            if (data != undefined){
+                latitude = data.geoplugin_latitude; 
+                longitude = data.geoplugin_longitude;
+                city.innerHTML = data.geoplugin_city;
+                region.innerHTML = data.geoplugin_region;
+                Country1 = "name/" + data.geoplugin_countryName;
+            }
+        }
+    } catch (error1) {
+        console.error('Fetch error:', error);
+    }
+
+    if (Country1){
         console.log(latitude,longitude);
         weather();
         MoreCountryInfo(`https://restcountries.com/v3.1/${Country1}`);
-        
-    }else{
-        document.getElementsByTagName("section")[0].lastElementChild.style.display = "none";
     }
-    msg = document.createElement("h1");
-    msg.textContent = "Veuillez nous autorisez à acceder à la localisation !!!";
-    msg.style.color = "red";
-    msg.style.margin = "40% 10%";
-
-    document.getElementsByTagName("section")[0].insertBefore(msg, document.getElementsByTagName("article")[1]);
-
-    console.log("Error occurred: " + error.message);
+    
 }
 
 async function GetLocInfo(IpURL){
@@ -95,6 +120,7 @@ async function MoreCountryInfo(CountryURL){
         countryImg.src =  data[0].flags.svg;
         countryImg.alt = data[0].flags.alt;
         people.innerHTML = data[0].population;
+        document.getElementsByTagName("section")[1].style.display = "flex";
     } catch (error) {
         console.error('Fetch error:', error);
     }
@@ -119,6 +145,7 @@ async function weather(){
 
         maxTemperature.innerHTML = data.daily.temperature_2m_max + data.daily_units.temperature_2m_max;
         minTemperature.innerHTML = data.daily.temperature_2m_min + data.daily_units.temperature_2m_min;
+        document.getElementById("Meteo").style.display = "flex";
 
     } catch (error) {
         console.error('Fetch error:', error);
@@ -199,37 +226,5 @@ async function CityInfo(form){
 }
 
 window.onload = async (event) => {
-    let Country1;
-    let userdata;
-    try{
-        data = await GetLocInfo("https://ipinfo.io/json");
-        if (data != undefined){
-            console.log(data.loc);
-            let VirgI = data.loc.indexOf(',');
-            console.log(typeof data.loc);
-            console.log(VirgI);
-            if (VirgI !== -1) {
-                latitude = data.loc.substring(0, VirgI); 
-                longitude = data.loc.substring(VirgI + 1);
-            }
-            console.log(latitude,longitude);
-            city.innerHTML = data.city;
-            region.innerHTML = data.region;
-            Country1 = "alpha/" + data.country;
-            userdata = data;
-        }else {
-            data = await GetLocInfo("http://www.geoplugin.net/json.gp");
-            if (data != undefined){
-                latitude = data.geoplugin_latitude; 
-                longitude = data.geoplugin_longitude;
-                city.innerHTML = data.geoplugin_city;
-                region.innerHTML = data.geoplugin_region;
-                Country1 = "name/" + data.geoplugin_countryName;
-                userdata = data;
-            }
-        }
-    } catch (error) {
-        console.error('Fetch error:', error);
-    }
-    await GetLocationManuel(userdata, Country1);
+    await GetLocationManuel();
 };

@@ -13,44 +13,47 @@
 
 
 body{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: light-dark(antiquewhite, #1D1616);
-    color: light-dark(#2f2f2f, #EEEEEE);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: light-dark(antiquewhite, #1D1616);
+  color: light-dark(#2f2f2f, #EEEEEE);
+  gap: 30px;
 }
 
 
 section{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 90%;
 }
 
-article, h1, a, h2{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 100%;
-    text-align: center;
-    flex-basis: auto;
+article, h1, a, h2, :has( > #Temperature){
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  text-align: center;
+  flex-basis: auto;
+  flex-wrap: wrap;
 }
 
 
 
 #SearchBar{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-    align-content: center;
-    flex-wrap: wrap;
-    width: 90%;
-    position : sticky ;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  align-content: center;
+  flex-wrap: wrap;
+  width: 90%;
+  position : sticky ;
+  max-width: 700px;
 
 }
 
@@ -58,7 +61,7 @@ article, h1, a, h2{
 
 article img{
   display: flex;
-  max-width: 100%;
+  width: 90%;
   height: fit-content;
   align-content: center;
 
@@ -67,15 +70,29 @@ article img{
 
 article h1{
   text-decoration-line: underline;
-  font-size: 200%;
+  font-size: 250%;
+  width: 70%;
+  
+}
+#Meteo h2, #Meteo h1, :has(> #Temperature), :has(> #Pluie), :has(> #Precipitation), :has(> #Population){
+  width: 80%;
 }
 
-#Temperature{
+#Meteo p{
+  margin: 3% 5%;
+}
+
+:has( > #Temperature){
   font-size: 175%;
 }
 
+article{
+  gap: 10px
+}
 
-
+#Meteo, body > section:last-of-type {
+  display: none;
+}
 
 /* Main styles*/
 form {
