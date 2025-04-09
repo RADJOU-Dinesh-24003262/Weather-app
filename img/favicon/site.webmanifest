@@ -16,6 +16,7 @@
     }
   ],
   "theme_color": "#7a8181",
-  "background_color": "#2b3137",
-  "display": "standalone"
+  "background_color": "#51708f",
+  "display": "standalone",
+  "start_url": "https://radjou-dinesh-24003262.github.io/Weather-app/"
 }
